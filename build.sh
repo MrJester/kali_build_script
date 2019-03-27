@@ -480,7 +480,7 @@ git clone -q -b master https://github.com/rvrsh3ll/FindFrontableDomains.git /opt
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 pushd /opt/FindFrontableDomains/ >/dev/null
 git pull -q
-./setup.sh1 1>&2
+./setup.sh 1>&2
 popd >/dev/null
 
 ##### Update wordlists
@@ -489,7 +489,7 @@ apt -y -qq install seclists \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/berzerk0/Probable-Wordlists.git /usr/share/wordlists/Probable-Wordlists \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
-pushd /usr/share/wordlist/Probable-Wordlists >/dev/null
+pushd /usr/share/wordlists/Probable-Wordlists >/dev/null
 git pull -q
 popd >/dev/null
 
