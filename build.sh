@@ -317,6 +317,7 @@ def index():
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, debug=True)
 EOF
+chmod +x /usr/local/bin/file_upload.py
 
 ##### Install Veil Evasion
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Veil-Evasion Framework${RESET} ~ AV Evasion Tool"
