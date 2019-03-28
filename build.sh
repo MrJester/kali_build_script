@@ -550,11 +550,4 @@ done
 FINISHTIME=$(date +%s)
 echo -e "\n\n ${YELLOW}[i]${RESET} Time (roughly) taken: ${YELLOW}$(( $(( FINISHTIME - STARTTIME )) / 60 )) minutes${RESET}"
 
-
-# close the stderr and stdout file descriptors.
-exec 1>&- 2>&-
-
-# Wait for tee to finish since now that other end of the pipe has closed.
-wait $TEEPID
-
 echo -e "\n\n ${YELLOW}[i]${RESET} Please reboot the system now to ensure all changes are taken. ${YELLOW}${RESET}"
