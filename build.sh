@@ -2,7 +2,7 @@
 
 #**************************************************************************#
 #  Filename: build.sh                   (Created: 2019-03-26)              #
-#                                       (Updated: 2019-03-27)              #
+#                                       (Updated: 2019-04-10)              #
 #  Info:                                                                   #
 #    Kali kick start script for adding missing tools and configs           #
 #  Author:                                                                 #
@@ -110,6 +110,8 @@ timeout 5 killall -w /usr/lib/apt/methods/http >/dev/null 2>&1
 gsettings set org.gnome.desktop.screensaver lock-enabled false
 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
 gsettings set org.gnome.desktop.session idle-delay 0
+cp wallpaper.jpg /usr/share/images/desktop-base/kali-custom-wallpaper.jpg
+gsettings set org.gnome.desktop.background picture-uri file:///usr/share/images/desktop-base/kali-custom-wallpaper.jpg
 
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring ${GREEN}hostname${RESET}"
 echo $KALINAME > /etc/hostname
@@ -117,7 +119,7 @@ sed -i "s/kali/$KALINAME/g" /etc/hosts
 
 ##### Install OS updates
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}Operating System${RESET}"
-apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y
+apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y
 
 ##### Install git - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}git${RESET} ~ revision control"
@@ -181,13 +183,13 @@ apt -y -qq install scrot \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 touch /usr/local/bin/screen.sh
 chmod 777 /usr/local/bin/screen.sh
-cat >> /root/archive.sh << EOF
-#!/bin/sh
-tar -czf /data/logs/screenshots/screenshot_backup_`date +%Y%m%d%H%M%S`.tar.gz /data/logs/screenshots/*.png && rm -rf /data/logs/screenshots/*.png
-tar -czf /data/logs/script/script_backup_`date +%Y%m%d%H%M%S`.tar.gz /data/logs/script/*.log && rm -rf /data/logs/script/*.log
-EOF
-chmod +x /root/archive.sh
-(crontab -l 2>/dev/null; echo "0 * * * * /root/archive.sh") | crontab -
+#cat >> /root/archive.sh << EOF
+##!/bin/sh
+#tar -czf /data/logs/screenshots/screenshot_backup_`date +%Y%m%d%H%M%S`.tar.gz /data/logs/screenshots/*.png && rm -rf /data/logs/screenshots/*.png
+#tar -czf /data/logs/script/script_backup_`date +%Y%m%d%H%M%S`.tar.gz /data/logs/script/*.log && rm -rf /data/logs/script/*.log
+#EOF
+#chmod +x /root/archive.sh
+#(crontab -l 2>/dev/null; echo "0 * * * * /root/archive.sh") | crontab -
 
 ##### Setting up Bash Aliases
 (( STAGE++ )); echo -e " ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Building ${GREEN}Bash Aliases${RESET}"
@@ -277,47 +279,18 @@ service postgresql start
 msfdb init
 
 ##### SOFTWARE INSTALLS #####
-##### Install simple file upload
+##### Install simple file browser/upload
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Install ${GREEN}Simple File Upload${RESET}"
-cat >> /usr/local/bin/file_upload.py << EOF
-#!/usr/local/bin/env python
-import os
-from flask import Flask, request, redirect, url_for
-from werkzeug import secure_filename
-
-UPLOAD_FOLDER = '/tmp/'
-ALLOWED_EXTENSIONS = set(['txt', 'zip'])
-
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-@app.route("/", methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('index'))
-    return """
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    <p>%s</p>
-    """ % "<br>".join(os.listdir(app.config['UPLOAD_FOLDER'],))
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5001, debug=True)
-EOF
-chmod +x /usr/local/bin/file_upload.py
+apt -y -qq install git \
+|| echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+git clone -q -b master git@github.com:MrJester/file_browser.git /opt/file_browser/ \
+|| echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
+pushd /opt/file_browser/ >/dev/null
+git pull -q
+pip install -r requirements.txt
+ln -s /opt/file_browser/filebrowser.py /usr/local/bin/file-browser.py
+chmod +x /usr/local/bin/file-browser.py
+popd >/dev/null
 
 ##### Install Veil Evasion
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Veil-Evasion Framework${RESET} ~ AV Evasion Tool"
@@ -495,16 +468,16 @@ popd >/dev/null
 
 ##### Update searchsploit
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Updating${RESET} searchsploit"
-searchsploit --update
+searchsploit --update 1>&2
 
 ##### Installing Offline Binary Exile Wiki
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
 apt -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-git clone -q -b master https://github.com/BinaryExile/BinaryExile.github.io /root/BinaryExileWiki \
+git clone -q -b master git@github.com:MrJester/click_scripts.git /data/click_scripts \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 gem install bundler 1>&2
-pushd /root/BinaryExileWiki >/dev/null
+pushd /data/click_scripts >/dev/null
 bundle install 1>&2
 cat >> /etc/systemd/system/jekyll.service << EOF
 [Unit]
@@ -514,8 +487,8 @@ After=syslog.target network.target
 [Service]
 User=root
 Type=simple
-WorkingDirectory=/root/BinaryExileWiki/BinaryExile.github.io
-ExecStart=/usr/local/bin/bundle exec jekyll serve --watch --source "/root/BinaryExileWiki/BinaryExile.github.io"
+WorkingDirectory=/data/click_scripts
+ExecStart=/usr/local/bin/bundle exec jekyll serve
 ExecStop=/usr/bin/pkill -f jekyll
 Restart=always
 TimeoutStartSec=60
@@ -528,6 +501,7 @@ SyslogIdentifier=jekyll
 WantedBy=multi-user.target network-online.target
 EOF
 bundle exec jekyll serve &
+systemctl enable jekyll
 popd >/dev/null
 
 ##### CLEANUP #####
