@@ -2,7 +2,7 @@
 
 #**************************************************************************#
 #  Filename: build.sh                   (Created: 2019-03-26)              #
-#                                       (Updated: 2019-04-10)              #
+#                                       (Updated: 2019-03-27)              #
 #  Info:                                                                   #
 #    Kali kick start script for adding missing tools and configs           #
 #  Author:                                                                 #
@@ -169,12 +169,12 @@ else
     mkdir -p /data/logs/screenshots
 fi
 
-##### Create Logging directory requirements
+##### Configuring
 (( STAGE++ )); echo -e " ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Adding ${GREEN}Timestamp to terminal and history${RESET}"
 echo 'export HISTTIMEFORMAT="%F-%T "' >> /root/.bashrc
 echo 'export PS1="\e[032m\D{%F %T}\e[m \n\u \W\\$ \[$(tput sgr0)\]"' >> /root/.bashrc
 echo 'lsof -tac script "$(tty)" || {' >> /root/.bashrc
-echo '   	script -f /data/logs/script/Script-$(date -d "today" +"%Y%m%d%H%M%S").log' >> /root/.bashrc
+echo '   	script -q -a -f /data/logs/script/Script-$(date -d "today" +"%Y%m%d").log' >> /root/.bashrc
 echo '}' >>  /root/.bashrc
 echo 'spool /root/msf_console.log' > /usr/share/metasploit-framework/scripts/resource/snrt.rc
 echo 'use exploit/multi/handler' >> /usr/share/metasploit-framework/scripts/resource/snrt.rc
