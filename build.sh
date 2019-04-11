@@ -162,16 +162,11 @@ if [[ -d /data/logs ]]; then
 else
     mkdir -p /data/logs
 fi
+
 if [[ -d /data/logs/script ]]; then
     echo -e "${RED}[!] Script directory already exists${RESET}"
 else
     mkdir -p /data/logs/script
-fi
-
-if [[ -d /data/logs/screenshots ]]; then
-    echo -e "${RED}[!] Screenshot directory already exists${RESET}"
-else
-    mkdir -p /data/logs/screenshots
 fi
 
 ##### Configuring
@@ -425,7 +420,33 @@ popd >/dev/null
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Updating${RESET} searchsploit"
 searchsploit --update 1>&2
 
-##### Installing Offline Binary Exile Wiki
+##### Install OpenVAS
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Installing${RESET} OpenVAS"
+apt-get -y -qq install openvas \
+|| echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+#openvas-setup
+#--- Bug fix (target credentials creation)
+#mkdir -p /var/lib/openvas/gnupg/
+#--- Bug fix (keys)
+#curl --progress -k -L -f "http://www.openvas.org/OpenVAS_TI.asc" | gpg --import - \
+#  || echo -e ' '${RED}'[!]'${RESET}" Issue downloading OpenVAS_TI.asc" 1>&2
+#--- Make sure all services are correct
+#openvas-start
+#--- User control
+#username="root"
+#password="huddlefuddlety"
+#(openvasmd --get-users | grep -q ^admin$) \
+#  && echo -n 'admin user: ' \
+#  && openvasmd --delete-user=admin
+#(openvasmd --get-users | grep -q "^${username}$") \
+#  || (echo -n "${username} user: "; openvasmd --create-user="${username}"; openvasmd --user="${username}" --new-password="${password}" >/dev/null)
+#echo -e " ${YELLOW}[i]${RESET} OpenVAS username: ${username}"
+#echo -e " ${YELLOW}[i]${RESET} OpenVAS password: ${password}   ***${BOLD}CHANGE THIS ASAP${RESET}***"
+#echo -e " ${YELLOW}[i]${RESET} Run: # openvasmd --user=admin --new-password='<NEW_PASSWORD>'"
+#sleep 3s
+#openvas-check-setup
+
+##### Installing Offline click_scripts Wiki
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
 apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
