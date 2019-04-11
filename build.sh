@@ -119,6 +119,10 @@ sed -i "s/kali/$KALINAME/g" /etc/hosts
 
 ##### Install OS updates
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}Operating System${RESET}"
+# Setup some variables so we don't get bothered with questions during the updates
+echo 'wireshark-common	wireshark-common/install-setuid	boolean	false'| debconf-set-selections
+echo 'libpam0g:amd64	libraries/restart-without-asking	boolean	true'| debconf-set-selections
+echo 'libpam0g:amd64	libpam0g/restart-services	string'| debconf-set-selections
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y
 
 ##### Install git - all users
