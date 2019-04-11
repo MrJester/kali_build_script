@@ -559,7 +559,7 @@ msfdb init
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Install ${GREEN}Simple File Upload${RESET}"
 apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-git clone -q -b master git@github.com:MrJester/file_browser.git /opt/file_browser/ \
+git clone -q -b master https://github.com/MrJester/file_browser.git /opt/file_browser/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 pushd /opt/file_browser/ >/dev/null
 git pull -q
@@ -750,7 +750,7 @@ searchsploit --update 1>&2
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
 apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-git clone -q -b master git@github.com:MrJester/click_scripts.git /data/click_scripts \
+git clone -q -b master https://github.com/MrJester/click_scripts.git /data/click_scripts \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 gem install bundler 1>&2
 pushd /data/click_scripts >/dev/null
