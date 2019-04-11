@@ -123,11 +123,12 @@ sed -i "s/kali/$KALINAME/g" /etc/hosts
 echo 'wireshark-common	wireshark-common/install-setuid	boolean	false'| debconf-set-selections
 echo 'libpam0g:amd64	libraries/restart-without-asking	boolean	true'| debconf-set-selections
 echo 'libpam0g:amd64	libpam0g/restart-services	string'| debconf-set-selections
+echo 'libpam0g:amd64	libpam0g/xdm-needs-restart	string'| debconf-set-selections
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y
 
 ##### Install git - all users
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}git${RESET} ~ revision control"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 #--- Set as default editor
 git config --global core.editor "vim"
@@ -145,12 +146,12 @@ git config --global user.name "root"
 if (dmidecode | grep -iq vmware); then
 ##### Install virtual machines tools ~ http://docs.kali.org/general-use/install-vmware-tools-kali-guest
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}VMware's virtual machine tools${RESET}"
-apt -y -qq install open-vm-tools-desktop fuse \
+apt-get -y -qq install open-vm-tools-desktop fuse \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 elif (dmidecode | grep -iq virtualbox); then
 ##### Installing Virtualbox Guest Additions.   Note: Need VirtualBox 4.2.xx+ for the host (http://docs.kali.org/general-use/kali-linux-virtual-box-guest)
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}VirtualBox's guest additions${RESET}"
-apt -y -qq install virtualbox-guest-x11 \
+apt-get -y -qq install virtualbox-guest-x11 \
   || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 fi
 
@@ -454,7 +455,7 @@ echo '}' >>  /root/.bashrc
 echo 'spool /root/msf_console.log' > /usr/share/metasploit-framework/scripts/resource/snrt.rc
 echo 'use exploit/multi/handler' >> /usr/share/metasploit-framework/scripts/resource/snrt.rc
 echo 'set ExitOnSession false' >> /usr/share/metasploit-framework/scripts/resource/snrt.rc
-apt -y -qq install scrot \
+apt-get -y -qq install scrot \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 touch /usr/local/bin/screen.sh
 chmod 777 /usr/local/bin/screen.sh
@@ -556,7 +557,7 @@ msfdb init
 ##### SOFTWARE INSTALLS #####
 ##### Install simple file browser/upload
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Install ${GREEN}Simple File Upload${RESET}"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master git@github.com:MrJester/file_browser.git /opt/file_browser/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -569,13 +570,13 @@ popd >/dev/null
 
 ##### Install Veil Evasion
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Veil-Evasion Framework${RESET} ~ AV Evasion Tool"
-apt -y -qq install veil-evasion \
+apt-get -y -qq install veil-evasion \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 /usr/share/veil/config/setup.sh --force --silent 1>&2
 
 ##### Install Empire
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Empire${RESET} ~ PowerShell post-exploitation"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/PowerShellEmpire/Empire.git /opt/empire/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -586,7 +587,7 @@ popd >/dev/null
 
 ##### Install spraywmi
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}SprayWMI${RESET} ~ WMI executition of PowerShell code to expand influence"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/trustedsec/spraywmi.git /opt/spraywmi/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -596,7 +597,7 @@ popd >/dev/null
 
 ##### Install Impacket
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Impacket${RESET} ~ Useful pentesting tools"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/CoreSecurity/impacket.git /opt/impacket/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -607,7 +608,7 @@ popd >/dev/null
 
 ##### Install Unicorn
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}TrustedSec Unicorn${RESET} ~ PowerShell metasploit payloads"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/trustedsec/unicorn.git /opt/unicorn/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -617,7 +618,7 @@ popd >/dev/null
 
 ##### Install Domainhunter
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}DomainHunter${RESET} ~ Domain OSINT Tool"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/minisllc/domainhunter.git /opt/domainhunter/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -644,7 +645,7 @@ popd >/dev/null
 
 ##### Install NTDSXtract
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}NTDSXtract${RESET} ~ Extract information from the Microsoft Active Directory"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/csababarta/ntdsxtract.git /tmp/ntdsxtract/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -669,7 +670,7 @@ popd >/dev/null
 
 ##### Install Discover
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Discover Tool${RESET}"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/leebaird/discover.git /opt/discover/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -679,14 +680,14 @@ popd >/dev/null
 
 ##### Install Atom Text Editor
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}NTDSXtract${RESET} ~ Extract information from the Microsoft Active Directory"
-apt -y -qq install libgconf-2-4 gconf2 gconf2-common gconf-service gvfs-bin \
+apt-get -y -qq install libgconf-2-4 gconf2 gconf2-common gconf-service gvfs-bin \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 wget -L -O '/tmp/atom.deb' https://atom.io/download/deb  >/dev/null
 dpkg -i /tmp/atom.deb
 
 ##### Install Bettercap
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Bettercap${RESET}"
-apt -y -qq install build-essential ruby-dev libpcap-dev bettercap \
+apt-get -y -qq install build-essential ruby-dev libpcap-dev bettercap \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 ##### Install GoPhish
@@ -696,7 +697,7 @@ unzip /tmp/gophish.zip -d /opt/gophish/
 
 ##### Install Responder
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Responder${RESET} ~ MiTM Credential Harvester"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/SpiderLabs/Responder.git /opt/responder/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -706,7 +707,7 @@ popd >/dev/null
 
 ##### Install Windows Exploit Suggester
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Windows Exploit Suggester${RESET}"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/bitsadmin/wesng.git /opt/wesng/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -717,12 +718,12 @@ popd >/dev/null
 
 ##### Install ftp client
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}FTP client${RESET}"
-apt -y -qq install ftp \
+apt-get -y -qq install ftp \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 
 ##### Install FindFrontableDomains
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}FindFrontableDomains${RESET}"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/rvrsh3ll/FindFrontableDomains.git /opt/FindFrontableDomains/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -733,7 +734,7 @@ popd >/dev/null
 
 ##### Update wordlists
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Updating${RESET} wordlists"
-apt -y -qq install seclists \
+apt-get -y -qq install seclists \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/berzerk0/Probable-Wordlists.git /usr/share/wordlists/Probable-Wordlists \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -747,7 +748,7 @@ searchsploit --update 1>&2
 
 ##### Installing Offline Binary Exile Wiki
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
-apt -y -qq install git \
+apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master git@github.com:MrJester/click_scripts.git /data/click_scripts \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
@@ -783,8 +784,8 @@ popd >/dev/null
 ##### Clean the system
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Cleaning${RESET} the system"
 #--- Clean package manager
-for FILE in clean autoremove; do apt -y -qq "${FILE}"; done
-apt -y -qq purge $(dpkg -l | tail -n +6 | egrep -v '^(h|i)i' | awk '{print $2}')   # Purged packages
+for FILE in clean autoremove; do apt-get -y -qq "${FILE}"; done
+apt-get -y -qq purge $(dpkg -l | tail -n +6 | egrep -v '^(h|i)i' | awk '{print $2}')   # Purged packages
 #--- Update slocate database
 updatedb
 #--- Reset folder location
