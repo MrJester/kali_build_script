@@ -434,7 +434,7 @@ apt-get -y -qq install openvas \
 #openvas-start
 #--- User control
 #username="root"
-#password="huddlefuddlety"
+#password="SuperSecretPassword"
 #(openvasmd --get-users | grep -q ^admin$) \
 #  && echo -n 'admin user: ' \
 #  && openvasmd --delete-user=admin
