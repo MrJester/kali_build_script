@@ -28,6 +28,7 @@ STAGE=0
 TOTAL=$(grep '(${STAGE}/${TOTAL})' $0 | wc -l);(( TOTAL-- ))
 STARTTIME=$(date +%s)
 KALINAME="Kiosk-$(shuf -i 1-1000 -n 1)"
+DEBIAN_FRONTEND=noninteractive
 
 ##### PRE CHECKS #####
 ##### Check if we are running as root - else this script will fail (hard!)
@@ -120,10 +121,16 @@ sed -i "s/kali/$KALINAME/g" /etc/hosts
 ##### Install OS updates
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}Operating System${RESET}"
 # Setup some variables so we don't get bothered with questions during the updates
-echo 'wireshark-common	wireshark-common/install-setuid	boolean	false'| debconf-set-selections
-echo 'libpam0g:amd64	libraries/restart-without-asking	boolean	true'| debconf-set-selections
-echo 'libpam0g:amd64	libpam0g/restart-services	string'| debconf-set-selections
-echo 'libpam0g:amd64	libpam0g/xdm-needs-restart	string'| debconf-set-selections
+echo 'wireshark-common wireshark-common/install-setuid boolean false'| debconf-set-selections
+echo 'libpam0g libraries/restart-without-asking boolean	true'| debconf-set-selections
+echo 'libpam0g:amd64 libraries/restart-without-asking boolean	true'| debconf-set-selections
+echo 'libpam0g libpam0g/restart-failed string'| debconf-set-selections
+echo 'libpam0g:amd64 libpam0g/restart-failed string'| debconf-set-selections
+echo 'libpam0g libpam0g/restart-services string'| debconf-set-selections
+echo 'libpam0g:amd64 libpam0g/restart-services string'| debconf-set-selections
+echo 'libpam0g libpam0g/xdm-needs-restart string'| debconf-set-selections
+echo 'libpam0g:amd64 libpam0g/xdm-needs-restart string'| debconf-set-selections
+
 apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get autoremove -y
 
 ##### Install git - all users
@@ -172,6 +179,7 @@ fi
 ##### Configuring
 (( STAGE++ )); echo -e " ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Adding ${GREEN}Timestamp to terminal and history${RESET}"
 mv bash_prompt.sh /root/.bash_prompt.sh
+chmod 750 /root/.bash_prompt.sh
 
 echo '#### Custom Bash export configuration'
 echo 'export HISTTIMEFORMAT="%F-%T "' >> /root/.bashrc
@@ -244,7 +252,9 @@ popd >/dev/null
 
 ##### Install Veil Evasion
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Veil-Evasion Framework${RESET} ~ AV Evasion Tool"
-apt-get -y -qq install veil-evasion \
+dpkg --add-architecture i386 1>&2
+apt-get update 1>&2
+apt-get -y -qq install wine32 veil-evasion \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 /usr/share/veil/config/setup.sh --force --silent 1>&2
 
