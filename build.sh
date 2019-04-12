@@ -422,29 +422,22 @@ searchsploit --update 1>&2
 
 ##### Install OpenVAS
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Installing${RESET} OpenVAS"
-apt-get -y -qq install openvas \
+apt-get -y -qq install openvas-scanner openvas \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
-#openvas-setup
-#--- Bug fix (target credentials creation)
-#mkdir -p /var/lib/openvas/gnupg/
-#--- Bug fix (keys)
-#curl --progress -k -L -f "http://www.openvas.org/OpenVAS_TI.asc" | gpg --import - \
-#  || echo -e ' '${RED}'[!]'${RESET}" Issue downloading OpenVAS_TI.asc" 1>&2
+/usr/bin/openvas-setup 1>&2
 #--- Make sure all services are correct
-#openvas-start
+openvas-start
 #--- User control
-#username="root"
-#password="SuperSecretPassword"
-#(openvasmd --get-users | grep -q ^admin$) \
-#  && echo -n 'admin user: ' \
-#  && openvasmd --delete-user=admin
-#(openvasmd --get-users | grep -q "^${username}$") \
-#  || (echo -n "${username} user: "; openvasmd --create-user="${username}"; openvasmd --user="${username}" --new-password="${password}" >/dev/null)
-#echo -e " ${YELLOW}[i]${RESET} OpenVAS username: ${username}"
-#echo -e " ${YELLOW}[i]${RESET} OpenVAS password: ${password}   ***${BOLD}CHANGE THIS ASAP${RESET}***"
-#echo -e " ${YELLOW}[i]${RESET} Run: # openvasmd --user=admin --new-password='<NEW_PASSWORD>'"
-#sleep 3s
-#openvas-check-setup
+username="root"
+password="SuperSecretPassword"
+(openvasmd --get-users | grep -q ^admin$) \
+  && echo -n 'admin user: ' \
+  && openvasmd --delete-user=admin
+(openvasmd --get-users | grep -q "^${username}$") \
+  || (echo -n "${username} user: "; openvasmd --create-user="${username}"; openvasmd --user="${username}" --new-password="${password}" >/dev/null)
+echo -e " ${YELLOW}[i]${RESET} OpenVAS username: ${username}"
+echo -e " ${YELLOW}[i]${RESET} OpenVAS password: ${password}   ***${BOLD}CHANGE THIS ASAP${RESET}***"
+echo -e " ${YELLOW}[i]${RESET} Run: # openvasmd --user=root --new-password='<NEW_PASSWORD>'"
 
 ##### Installing Offline click_scripts Wiki
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
