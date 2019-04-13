@@ -28,7 +28,7 @@ STAGE=0
 TOTAL=$(grep '(${STAGE}/${TOTAL})' $0 | wc -l);(( TOTAL-- ))
 STARTTIME=$(date +%s)
 KALINAME="Kiosk-$(shuf -i 1-1000 -n 1)"
-DEBIAN_FRONTEND=noninteractive
+
 
 ##### PRE CHECKS #####
 ##### Check if we are running as root - else this script will fail (hard!)
@@ -45,6 +45,10 @@ fi
 ##### Fix display output for GUI programs (when connecting via SSH)
 export DISPLAY=:0.0
 export TERM=xterm
+
+##### Change nameserver
+echo 'nameserver 1.1.1.1' > /etc/resolv.conf
+sed -i "s/deb http:////http.kali.org//kali kali-rolling main non-free contrib/deb https:////http.kali.org//kali kali-rolling main non-free contrib/" /etc/apt/sources.list
 
 ##### Check Internet access
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Checking ${GREEN}Internet access${RESET}"
@@ -245,7 +249,7 @@ git clone -q -b master https://github.com/MrJester/file_browser.git /opt/file_br
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 pushd /opt/file_browser/ >/dev/null
 git pull -q
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ln -s /opt/file_browser/filebrowser.py /usr/local/bin/file-browser.py
 chmod +x /usr/local/bin/file-browser.py
 popd >/dev/null
