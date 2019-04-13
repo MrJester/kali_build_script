@@ -24,10 +24,12 @@ RESET="\033[00m"       # Normal
 
 
 ##### Setup some global vars
+DEBIAN_FRONTEND="noninteractive"
 STAGE=0
 TOTAL=$(grep '(${STAGE}/${TOTAL})' $0 | wc -l);(( TOTAL-- ))
 STARTTIME=$(date +%s)
 KALINAME="Kiosk-$(shuf -i 1-1000 -n 1)"
+STAGING_KEY="RANDOM"
 
 
 ##### PRE CHECKS #####
