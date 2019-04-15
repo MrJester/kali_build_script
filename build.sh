@@ -50,7 +50,7 @@ export TERM=xterm
 
 ##### Change nameserver
 echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-sed -i "s/deb http:////http.kali.org//kali kali-rolling main non-free contrib/deb https:////http.kali.org//kali kali-rolling main non-free contrib/" /etc/apt/sources.list
+sed -i "s/deb http:\/\/http.kali.org\/kali kali-rolling main non-free contrib/deb https:\/\/http.kali.org\/kali kali-rolling main non-free contrib/" /etc/apt/sources.list
 
 ##### Check Internet access
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Checking ${GREEN}Internet access${RESET}"
