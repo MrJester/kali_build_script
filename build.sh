@@ -187,7 +187,7 @@ fi
 mv bash_prompt.sh /root/.bash_prompt.sh
 chmod 750 /root/.bash_prompt.sh
 
-echo '#### Custom Bash export configuration'
+echo '#### Custom Bash export configuration'  >> /root/.bashrc
 echo 'export HISTTIMEFORMAT="%F-%T "' >> /root/.bashrc
 echo 'source /root/.bash_prompt.sh' >> /root/.bashrc
 echo 'lsof -tac script "$(tty)" || {' >> /root/.bashrc
