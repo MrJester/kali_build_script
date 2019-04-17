@@ -2,12 +2,17 @@
 
 #**************************************************************************#
 #  Filename: build.sh                   (Created: 2019-03-26)              #
-#                                       (Updated: 2019-03-27)              #
+#                                       (Updated: 2019-04-15)              #
 #  Info:                                                                   #
 #    Kali kick start script for adding missing tools and configs           #
 #  Author:                                                                 #
 #    Ryan Hays                                                             #
 #**************************************************************************#
+# TODO:
+#   Update User-Agents on common tools
+#       Nmap
+#       Nikto
+
 
 # Setup a log file to catch all output
 exec > >(tee -ia /root/Desktop/build_log.log)
@@ -124,6 +129,9 @@ gsettings set org.gnome.desktop.background picture-uri file:///usr/share/images/
 echo $KALINAME > /etc/hostname
 sed -i "s/kali/$KALINAME/g" /etc/hosts
 
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Fixing ${GREEN}Client SSH Config${RESET}"
+mv ssh_config /etc/ssh/
+
 ##### Install OS updates
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Updating ${GREEN}Operating System${RESET}"
 # Setup some variables so we don't get bothered with questions during the updates
@@ -226,10 +234,10 @@ chmod +x /usr/local/bin/update-hostname.sh
 
 ##### Reconfigure SSH Server
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Configuring ${GREEN}OpenSSH Server${RESET}"
-systemctl stop ssh.service
+systemctl stop ssh.service 1>&2
 mkdir /etc/ssh/default_keys
 mv /etc/ssh/ssh_host_* /etc/ssh/default_keys/
-dpkg-reconfigure openssh-server
+dpkg-reconfigure openssh-server 1>&2
 systemctl enable ssh.service
 systemctl start ssh.service
 
@@ -251,7 +259,7 @@ git clone -q -b master https://github.com/MrJester/file_browser.git /opt/file_br
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 pushd /opt/file_browser/ >/dev/null
 git pull -q
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt 1>&2
 ln -s /opt/file_browser/filebrowser.py /usr/local/bin/file-browser.py
 chmod +x /usr/local/bin/file-browser.py
 popd >/dev/null
@@ -271,7 +279,7 @@ apt-get -y -qq install git \
 git clone -q -b master https://github.com/PowerShellEmpire/Empire.git /opt/empire/ \
 || echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
 pushd /opt/empire/ >/dev/null
-/opt/empire/setup/install.sh
+/opt/empire/setup/install.sh >/dev/null
 git pull -q
 popd >/dev/null
 
@@ -456,7 +464,7 @@ echo -e " ${YELLOW}[i]${RESET} OpenVAS password: ${password}   ***${BOLD}CHANGE 
 echo -e " ${YELLOW}[i]${RESET} Run: # openvasmd --user=root --new-password='<NEW_PASSWORD>'"
 
 ##### Installing Offline click_scripts Wiki
-(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of BinaryExile Wiki (OFFLINE)"
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Creating${RESET} a clone of click_script Wiki (OFFLINE)"
 apt-get -y -qq install git \
 || echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
 git clone -q -b master https://github.com/MrJester/click_scripts.git /data/click_scripts \
