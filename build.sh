@@ -430,6 +430,16 @@ git pull -q
 ./setup.sh 1>&2
 popd >/dev/null
 
+##### Install Vulmap
+(( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) Installing ${GREEN}Vulmap${RESET}"
+apt-get -y -qq install git \
+|| echo -e ' '${RED}'[!] Issue with apt install'${RESET} 1>&2
+git clone -q -b master https://github.com/vulmon/Vulmap.git /opt/Vulmap/ \
+|| echo -e ' '${RED}'[!] Issue when git cloning'${RESET} 1>&2
+pushd /opt/Vulmap/ >/dev/null
+git pull -q
+popd >/dev/null
+
 ##### Update wordlists
 (( STAGE++ )); echo -e "\n\n ${GREEN}[+]${RESET} (${STAGE}/${TOTAL}) ${GREEN}Updating${RESET} wordlists"
 apt-get -y -qq install seclists \
