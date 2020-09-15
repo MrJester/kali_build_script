@@ -1,9 +1,7 @@
 ## grep aliases
 alias grep="grep --color=always"
 alias ngrep="grep -n"
-
 alias egrep="egrep --color=auto"
-
 alias fgrep="fgrep --color=auto"
 
 ## Checksums
@@ -23,7 +21,7 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 
 ## Update the OS
-alias update-os='apt-get update && apt-get upgrade -y && apt-get dist-upgrade -y && apt autoremove -y'
+alias update-os='sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get dist-upgrade -y && sudo apt autoremove -y'
 
 ## Extract file
 ## Extract file, example. "ex package.tar.bz2"
@@ -64,4 +62,4 @@ fi
 }
 
 ## openvas
-alias openvas="openvas-stop; openvas-start; sleep 3s; xdg-open https://127.0.0.1:9392/ >/dev/null 2>&1"
+alias openvas="sudo openvas-stop; sudo openvas-start; sleep 3s; xdg-open https://127.0.0.1:9392/ >/dev/null 2>&1"
